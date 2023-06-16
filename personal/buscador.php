@@ -3,7 +3,133 @@
 function buscador_productos_shortcode() {
     ob_start();
     ?>
+<style>
+    select.search-category {
+  font-size: 21px;
+  width: 300px;
+  
+}
 
+input.search-input:placeholder-shown {
+  font-size: 18px;
+}
+@media only screen and (min-width: 600px) {
+form.search-form {
+  width: 820px;
+}
+}
+
+
+    select.search-category {
+  background: #ffffff;
+}
+
+form.search-form {
+  background: #ffffff;
+}
+button.search-submit:hover {
+  background: #2D8A36;
+}
+form button svg:hover {
+  color: #ffffff;
+  }
+  form button svg {
+  color: #000000;
+  }
+input.search-input {
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+  .search-form {
+      display: flex;
+      align-items: center;
+      background-color: #ffffff;
+    border-radius: 20px;
+      padding: 5px;
+  }
+
+  .search-category {
+    font-family: 'poppins', sans-serif;
+      flex-grow: 1;
+      border: none;
+      outline: none;
+      padding: 5px;
+      font-size: 16px;
+  }
+
+  .search-input {
+      border: none;
+      outline: none;
+      padding: 5px;
+      font-size: 14px;
+  }
+
+  .search-submit {
+      border: none;
+      background-color: transparent;
+      cursor: pointer;
+      padding: 5px;
+  }
+
+  .search-results {
+      margin-top: 10px;
+      position: absolute;
+      z-index: 999;
+      background-color: #ffffff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      max-height: 300px;
+      overflow-y: auto;
+      width: 100%;
+  }
+
+  .search-results .product {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      cursor: pointer; /* Added */
+  }
+
+  .product-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-right: 10px;
+  }
+
+  .product-info {
+      display: flex; /* Added */
+      align-items: center; /* Added */
+  }
+
+  .product-name {
+      font-weight: bold;
+  }
+
+  .product-price {
+      margin-top: 5px;
+  }
+
+  .product-price .regular-price {
+      text-decoration: line-through;
+      color: red;
+      margin-right: 5px;
+  }
+
+  .product-price .sale-price {
+      font-weight: bold;
+      color: green;
+  }
+
+.view-all-results {
+       position: fixed;
+    bottom: 321px;
+    left: 50%;
+    /* transform: translateX(-50%); */
+    z-index: 999;
+}
+
+    </style>
     <div class="search-container">
         <form class="search-form">
             <?php

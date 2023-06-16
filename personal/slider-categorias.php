@@ -88,7 +88,7 @@ function slider_shortcode($atts) {
     
     .category-slider .category {
         text-align: center;
-        background-color: #f5f5f5;
+        
         padding: 20px;
     }
     
