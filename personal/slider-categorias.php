@@ -21,7 +21,7 @@ function slider_shortcode($atts) {
   
   if (!empty($categories)) {
       $category_count = count($categories);
-      $categories_per_row = 4;
+      $categories_per_row = 6;
       $row_count = ceil($category_count / $categories_per_row);
       ?>
       <div class="category-slider">
