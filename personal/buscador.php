@@ -30,13 +30,9 @@ function buscador_productos_shortcode() {
                 </svg>
             </button>
         </form>
-
-        <div class="search-results"></div>
-        <div class="view-all-results">
-            <!--<a class="ver-todos" href="#">Ver todos</a>-->
-        </div>
-
     </div>
+
+    <div id="search-results"></div>
 
     <script>
         (function($) {
@@ -55,13 +51,13 @@ function buscador_productos_shortcode() {
                             category: categoryValue,
                         },
                         beforeSend: function() {
-                            $('.search-results').empty().append('<p>Cargando resultados...</p>');
+                            $('#search-results').empty().append('<p>Cargando resultados...</p>');
                         },
                         success: function(response) {
-                            $('.search-results').html(response);
+                            $('#search-results').html(response);
                         },
                         error: function() {
-                            $('.search-results').html('<p>Ocurrió un error al cargar los resultados.</p>');
+                            $('#search-results').html('<p>Ocurrió un error al cargar los resultados.</p>');
                         }
                     });
                 }
@@ -76,7 +72,7 @@ function buscador_productos_shortcode() {
                     if (searchValue.length >= 3) {
                         searchProducts();
                     } else {
-                        $('.search-results').empty();
+                        $('#search-results').empty();
                     }
                 });
 
@@ -110,6 +106,7 @@ function buscador_productos_shortcode() {
     return ob_get_clean();
 }
 add_shortcode('buscador_productos', 'buscador_productos_shortcode');
+
 
 function buscar_productos_ajax_handler() {
     $search = $_POST['search'];
