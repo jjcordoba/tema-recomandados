@@ -51,69 +51,76 @@ function slider_shortcode($atts) {
           </div>
       </div>
       <style>
-          .category-slider {
-              position: relative;
-              width: 100%;
-              overflow: hidden;
-          }
-          
-          .slider-container {
-              width: 100%;
-              overflow: hidden;
-              margin-bottom: 20px;
-          }
-          
-          .slider-wrapper {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              overflow: hidden;
-          }
-          
-          .category-slider .slides {
-              display: flex;
-              flex-wrap: wrap;
-              padding: 0;
-              margin: 0;
-              list-style: none;
-              transform: translateX(0);
-              transition: transform 0.5s ease-in-out;
-          }
-          
-          .category-slider .slides li {
-              width: calc(100% / <?php echo $categories_per_row; ?>);
-              padding: 0 10px;
-              box-sizing: border-box;
-          }
-          
-          .category-slider .category {
-              text-align: center;
-              background-color: #f5f5f5;
-              padding: 20px;
-          }
-          
-          .category-slider .category h3 {
-              margin-top: 0;
-          }
-          
-          .category-slider .slider-nav {
-              position: absolute;
-              top: 50%;
-              transform: translateY(-50%);
-              display: flex;
-              justify-content: space-between;
-              width: 100%;
-              padding: 0 20px;
-          }
-          
-          .category-slider .slider-nav span {
-              cursor: pointer;
-          }
-          
-          .category-slider .hidden-slide {
-              display: none;
-          }
-      </style>
+    .category-slider {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+    
+    .slider-container {
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    
+    .slider-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    
+    .category-slider .slides {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        transform: translateX(0);
+        transition: transform 0.5s ease-in-out;
+    }
+    
+    .category-slider .slides li {
+        width: calc(100% / <?php echo $categories_per_row; ?>);
+        padding: 0 10px;
+        box-sizing: border-box;
+    }
+    
+    .category-slider .category {
+        text-align: center;
+        background-color: #f5f5f5;
+        padding: 20px;
+    }
+    
+    .category-slider .category h3 {
+        margin-top: 0;
+    }
+    
+    .category-slider .slider-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0 20px;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+    
+    .category-slider:hover .slider-nav {
+        opacity: 1;
+    }
+    
+    .category-slider .slider-nav span {
+        cursor: pointer;
+    }
+    
+    .category-slider .hidden-slide {
+        display: none;
+    }
+</style>
+
       <script>
           jQuery(document).ready(function($) {
               var sliderContainer = $('.slider-container');
