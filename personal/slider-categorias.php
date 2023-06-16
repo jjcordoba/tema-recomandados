@@ -21,126 +21,117 @@ function slider_shortcode($atts) {
   
   if (!empty($categories)) {
       $category_count = count($categories);
-      $categories_per_slide = 6;
-      $slide_count = ceil($category_count / $categories_per_slide);
+      $categories_per_row = 4;
+      $row_count = ceil($category_count / $categories_per_row);
       ?>
       <div class="category-slider">
           <div class="slider-container">
               <div class="slider-wrapper">
-                  <?php for ($i = 0; $i < $slide_count; $i++) : ?>
-                      <div class="slide">
-                          <ul class="slides">
-                              <?php $start_index = $i * $categories_per_slide; ?>
-                              <?php $end_index = min(($i + 1) * $categories_per_slide, $category_count); ?>
-                              <?php for ($j = $start_index; $j < $end_index; $j++) : ?>
-                                  <li>
-                                      <a href="<?php echo get_term_link($categories[$j]); ?>">
-                                          <div class="category">
-                                              <?php
-                                                  $thumbnail_id = get_term_meta($categories[$j]->term_id, 'thumbnail_id', true);
-                                                  $image_url = wp_get_attachment_url($thumbnail_id);
-                                              ?>
-                                              <div class="category-image">
-                                                  <img src="<?php echo $image_url; ?>" alt="<?php echo $categories[$j]->name; ?>" />
-                                              </div>
-                                              <h3 class="category-title"><?php echo $categories[$j]->name; ?></h3>
-                                          </div>
-                                      </a>
-                                  </li>
-                              <?php endfor; ?>
-                          </ul>
-                      </div>
-                  <?php endfor; ?>
+                  <ul class="slides">
+                      <?php $counter = 0; foreach ($categories as $category) : ?>
+                          <li class="<?php if ($counter >= $categories_per_row) { echo 'hidden-slide'; } ?>">
+                              <div class="category">
+                                  <?php
+                                      $thumbnail_id = get_term_meta($category->term_id, 'thumbnail_id', true);
+                                      $image_url = wp_get_attachment_url($thumbnail_id);
+                                  ?>
+                                  <a href="<?php echo get_term_link($category); ?>">
+                                      <img src="<?php echo $image_url; ?>" alt="<?php echo $category->name; ?>" />
+                                      <h3><?php echo $category->name; ?></h3>
+                                  </a>
+                              </div>
+                          </li>
+                          <?php $counter++; endforeach; ?>
+                  </ul>
               </div>
           </div>
           <div class="slider-nav">
-              <span class="slider-prev">&lsaquo;</span>
-              <span class="slider-next">&rsaquo;</span>
+              <span class="slider-prev">◀</span>
+              <span class="slider-next">▶</span>
           </div>
       </div>
       <style>
-        .category-slider {
-            position: relative;
-            width: 100%;
-            margin-bottom: 20px;
-        }
+    .category-slider {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+    
+    .slider-container {
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    
+    .slider-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    
+    .category-slider .slides {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        transform: translateX(0);
+        transition: transform 0.5s ease-in-out;
+    }
+    
+    .category-slider .slides li {
+        width: calc(100% / <?php echo $categories_per_row; ?>);
+        padding: 0 10px;
+        box-sizing: border-box;
+    }
+    
+    .category-slider .category {
+        text-align: center;
         
-        .slider-container {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap; /* Evita que las diapositivas se desplacen a la siguiente línea */
-        }
-        
-        .slider-wrapper {
-            display: inline-block; /* Mantiene el ancho ajustado al contenido */
-            transition: transform 0.5s ease-in-out; /* Agrega una transición suave al cambiar de diapositiva */
-        }
-        
-        .slide {
-            display: inline-block; /* Muestra las diapositivas en línea */
-            vertical-align: top; /* Alinea las diapositivas en la parte superior */
-            width: 100%; /* Ocupa todo el ancho del contenedor */
-        }
-        
-        .category-slider .slides {
-            display: flex;
-            padding: 0;
-            margin: 0;
-            list-style: none;
-            width: max-content; /* Ajusta el ancho al contenido */
-            transition: transform 0.5s ease-in-out; /* Agrega una transición suave al cambiar de diapositiva */
-        }
-        
-        .category-slider .slides li {
-            width: calc(100% / <?php echo $categories_per_slide; ?>);
-            padding: 0 10px;
-            box-sizing: border-box;
-        }
-        
-        .category-slider .category {
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .category-slider .category-image img {
-            max-width: 100%;
-            height: auto;
-        }
-        
-        .category-slider .category-title {
-            margin-top: 10px;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        
-        .category-slider .slider-nav {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        
-        .category-slider .slider-nav span {
-            cursor: pointer;
-            margin: 0 5px;
-            font-size: 24px;
-            color: #999;
-        }
-        
-        .category-slider .slider-nav span:hover {
-            color: #555;
-        }
-      </style>
+        padding: 20px;
+    }
+    
+    .category-slider .category h3 {
+        margin-top: 0;
+    }
+    
+    .category-slider .slider-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0 20px;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+    
+    .category-slider:hover .slider-nav {
+        opacity: 1;
+    }
+    
+    .category-slider .slider-nav span {
+        cursor: pointer;
+    }
+    
+    .category-slider .hidden-slide {
+        display: none;
+    }
+</style>
 
       <script>
           jQuery(document).ready(function($) {
-              var sliderWrapper = $('.slider-wrapper');
-              var slides = $('.slide');
-              var slideWidth = sliderWrapper.width();
-              var slideCount = slides.length;
+              var sliderContainer = $('.slider-container');
+              var slideWrapper = $('.slider-wrapper');
+              var slides = $('.slides');
+              var slideWidth = sliderContainer.width();
+              var slideCount = $('.slides li').length;
               var totalWidth = slideWidth * slideCount;
               var autoPlayInterval;
           
-              sliderWrapper.css('width', totalWidth);
+              slides.css('width', totalWidth);
           
               function startAutoPlay() {
                   autoPlayInterval = setInterval(function() {
@@ -154,18 +145,18 @@ function slider_shortcode($atts) {
           
               $('.slider-prev').click(function() {
                   stopAutoPlay();
-                  sliderWrapper.animate({scrollLeft: '-=' + slideWidth}, 800, function() {
-                      sliderWrapper.find('.slide:last').detach().prependTo(sliderWrapper);
-                      sliderWrapper.scrollLeft(slideWidth);
+                  slides.animate({marginLeft: slideWidth}, 500, function() {
+                      slides.css('margin-left', 0);
+                      slides.find('li:last').prependTo(slides);
                       startAutoPlay();
                   });
               });
           
               $('.slider-next').click(function() {
                   stopAutoPlay();
-                  sliderWrapper.animate({scrollLeft: '+=' + slideWidth}, 800, function() {
-                      sliderWrapper.find('.slide:first').detach().appendTo(sliderWrapper);
-                      sliderWrapper.scrollLeft(slideWidth);
+                  slides.animate({marginLeft: -slideWidth}, 500, function() {
+                      slides.css('margin-left', 0);
+                      slides.find('li:first').appendTo(slides);
                       startAutoPlay();
                   });
               });
