@@ -1,100 +1,106 @@
 <?php
 
 function buscador_productos_shortcode() {
-    ob_start();
-    ?>
-    <style>
-        /* Estilos CSS originales aquí */
+  ob_start();
+  ?>
 
-    </style>
 
-    <div class="search-container">
-        <form class="search-form">
-            <?php
-            $categories = get_terms(array(
-                'taxonomy' => 'product_cat',
-                'hide_empty' => false,
-            ));
+  <div class="search-container">
+      <form class="search-form">
+          <?php
+          $categories = get_terms(array(
+              'taxonomy' => 'product_cat',
+              'hide_empty' => false,
+          ));
 
-            if ($categories) :
-            ?>
-                <select class="search-category" name="category">
-                    <option value="">Todas las categorías</option>
-                    <?php foreach ($categories as $category) : ?>
-                        <option value="<?php echo $category->term_id; ?>"><?php echo $category->name; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            <?php endif; ?>
+          if ($categories) :
+          ?>
+          <select class="search-category">
+              <option value="">Todas las categorías</option>
+              <?php foreach ($categories as $category) : ?>
+                  <option value="<?php echo $category->term_id; ?>"><?php echo $category->name; ?></option>
+              <?php endforeach; ?>
+          </select>
+          <?php endif; ?>
 
-            <input type="text" class="search-input" placeholder="Busca productos, marcas y más">
+          <input type="text" class="search-input" placeholder="Busca productos, marcas y más">
 
-            <button type="submit" class="search-submit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 24 24">
-                    <!-- Ícono de búsqueda aquí -->
-                </svg>
-            </button>
-        </form>
+          <button type="submit" class="search-submit">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.784 22.8l-6.168-6.144c1.584-1.848 2.448-4.176 2.448-6.576 0-5.52-4.488-10.032-10.032-10.032-5.52 0-10.008 4.488-10.008 10.008s4.488 10.032 10.032 10.032c2.424 0 4.728-0.864 6.576-2.472l6.168 6.144c0.144 0.144 0.312 0.216 0.48 0.216s0.336-0.072 0.456-0.192c0.144-0.12 0.216-0.288 0.24-0.48 0-0.192-0.072-0.384-0.192-0.504zM18.696 10.080c0 4.752-3.888 8.64-8.664 8.64-4.752 0-8.64-3.888-8.64-8.664 0-4.752 3.888-8.64 8.664-8.64s8.64 3.888 8.64 8.664z"></path>
+              </svg>
+          </button>
+      </form>
 
-        <div class="search-results"></div>
+      <div class="search-results"></div>
 
-        <script>
-            (function($) {
-                $(document).ready(function() {
-                    $('.search-form').on('submit', function(e) {
-                        e.preventDefault();
-                        var searchValue = $('.search-input').val();
-                        var categoryValue = $('.search-category').val();
+      <script>
+        (function($) {
+            $(document).ready(function() {
+                function searchProducts() {
+                    var searchValue = $('.search-input').val();
+                    var categoryValue = $('.search-category').val();
 
-                        // Verificar si se ingresaron al menos 3 letras para iniciar la búsqueda AJAX
-                        if (searchValue.length >= 3) {
-                            // Realizar la búsqueda utilizando AJAX
-                            $.ajax({
-                                url: '<?php echo admin_url('admin-ajax.php'); ?>',
-                                method: 'POST',
-                                data: {
-                                    action: 'buscar_productos',
-                                    search: searchValue,
-                                    category: categoryValue,
-                                },
-                                beforeSend: function() {
-                                    $('.search-results').empty().append('<p>Cargando resultados...</p>');
-                                },
-                                success: function(response) {
-                                    $('.search-results').html(response);
-                                },
-                                error: function() {
-                                    $('.search-results').html('<p>Ocurrió un error al cargar los resultados.</p>');
-                                }
-                            });
+                    // Realizar la búsqueda utilizando AJAX
+                    $.ajax({
+                        url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                        method: 'POST',
+                        data: {
+                            action: 'buscar_productos',
+                            search: searchValue,
+                            category: categoryValue,
+                        },
+                        beforeSend: function() {
+                            $('.search-results').empty().append('<p>Cargando resultados...</p>');
+                        },
+                        success: function(response) {
+                            $('.search-results').html(response);
+                            var resultCount = $('.search-results').find('.product').length;
+                            if (resultCount > 7) {
+                                var searchUrl = '<?php echo home_url('/search'); ?>';
+                                var encodedSearch = encodeURIComponent(searchValue);
+                                var encodedCategory = encodeURIComponent(categoryValue);
+                                searchUrl += '?search=' + encodedSearch + '&category=' + encodedCategory;
+                                $('.view-all-results').html('<a href="' + searchUrl + '">Ver todos</a>');
+                            }
+                        },
+                        error: function() {
+                            $('.search-results').html('<p>Ocurrió un error al cargar los resultados.</p>');
                         }
                     });
+                }
 
-                    $(document).on('keyup', '.search-input', function() {
-                        var searchValue = $(this).val();
-
-                        if (searchValue.length >= 3) {
-                            $('.search-form').submit();
-                        } else {
-                            $('.search-results').empty();
-                        }
-                    });
-
-                    $(document).on('click', '.search-submit', function() {
-                        $('.search-form').submit();
-                    });
-
-                    $(document).on('click', '.product', function() {
-                        var productUrl = $(this).data('product-url');
-                        if (productUrl) {
-                            window.location.href = productUrl;
-                        }
-                    });
+                $('.search-form').on('submit', function(e) {
+                    e.preventDefault();
+                    searchProducts();
                 });
-            })(jQuery);
-        </script>
-    </div>
-    <?php
-    return ob_get_clean();
+
+                $('.search-input').on('input', function() {
+                    var searchValue = $(this).val();
+                    if (searchValue.length >= 3) {
+                        searchProducts();
+                    } else {
+                        $('.search-results').empty();
+                    }
+                });
+
+                $(document).on('click', '.search-submit', function() {
+                    $('.search-form').submit();
+                });
+
+                $(document).on('click', '.product', function() {
+                    var productUrl = $(this).data('product-url');
+                    if (productUrl) {
+                        window.location.href = productUrl;
+                    }
+                });
+            });
+        })(jQuery);
+      </script>
+
+  </div>
+  <?php
+  return ob_get_clean();
 }
 add_shortcode('buscador_productos', 'buscador_productos_shortcode');
 
@@ -107,44 +113,24 @@ function buscar_productos_ajax_handler() {
         'post_status' => 'publish',
         'posts_per_page' => -1,
         's' => $search,
-        'meta_query' => array(
-            'relation' => 'OR',
-            array(
-                'key' => '_sku',
-                's' => '*' . $search . '*',
-                'compare' => 'LIKE'
-            ),
-            array(
-                'relation' => 'OR',
-                array(
-                    'key' => '_thumbnail_id',
-                    'value' => $search,
-                    'compare' => 'LIKE'
-                ),
-                array(
-                    'key' => '_product_image_gallery',
-                    'value' => $search,
-                    'compare' => 'LIKE'
-                )
-            )
-        ),
-        'tax_query' => array(
-            'relation' => 'AND',
+    );
+
+    if (!empty($category)) {
+        $args['tax_query'] = array(
             array(
                 'taxonomy' => 'product_cat',
                 'field' => 'term_id',
                 'terms' => $category,
-                'include_children' => true
-            )
-        )
-    );
-
+            ),
+        );
+    }
 
     $products = new WP_Query($args);
 
     ob_start();
 
     if ($products->have_posts()) {
+        $result_count = 0;
         while ($products->have_posts()) {
             $products->the_post();
             $product = wc_get_product(get_the_ID());
@@ -168,6 +154,14 @@ function buscar_productos_ajax_handler() {
             echo '<span class="sale-price">' . wc_price($price) . '</span>';
             echo '</div>';
             echo '</div>';
+
+            if ($result_count > 7) {
+                echo '<div class="view-all-results">';
+                echo '<a href="' . $search_url . '">Ver todos</a>';
+                echo '</div>';
+            }
+
+            echo '<div class="view-all-results"></div>';
         }
     } else {
         echo '<p>No se encontraron productos.</p>';
@@ -181,6 +175,5 @@ function buscar_productos_ajax_handler() {
 
     die();
 }
-
 add_action('wp_ajax_buscar_productos', 'buscar_productos_ajax_handler');
 add_action('wp_ajax_nopriv_buscar_productos', 'buscar_productos_ajax_handler');
