@@ -5,3 +5,4 @@ require_once 'personal/cuenta.php';
 require_once 'personal/buscador.php';
 require_once 'personal/departamentos.php';
 require_once 'personal/slider-categorias.php';
+require_once 'personal/mostrarvariaciones.php';
