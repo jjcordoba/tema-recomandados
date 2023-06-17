@@ -43,9 +43,9 @@ if ( woocommerce_product_loop() ) {
 			$product_type = $product->get_type();
 
 			if ( 'simple' === $product_type ) {
-				echo '<a href="' . esc_url( get_permalink() ) . '" class="button product_type_simple add_to_cart_button ajax_add_to_cart added">' . esc_html__( 'Agregar al carrito', 'woocommerce' ) . '</a>';
-			} else {
 				woocommerce_template_single_add_to_cart();
+			} elseif ( 'variable' === $product_type ) {
+				woocommerce_variable_add_to_cart();
 			}
 		}
 
