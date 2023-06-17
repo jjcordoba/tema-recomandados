@@ -39,9 +39,14 @@ if ( woocommerce_product_loop() ) {
 			echo woocommerce_get_product_thumbnail();
 			echo '</a>';
 
-			woocommerce_template_single_add_to_cart();
+			global $product;
+			$product_type = $product->get_type();
 
-			echo '<a href="' . esc_url( get_permalink() ) . '" class="button add_to_cart_button">' . esc_html__( 'Agregar al carrito', 'woocommerce' ) . '</a>';
+			if ( 'simple' === $product_type ) {
+				echo '<a href="' . esc_url( get_permalink() ) . '" class="button product_type_simple add_to_cart_button ajax_add_to_cart added">' . esc_html__( 'Agregar al carrito', 'woocommerce' ) . '</a>';
+			} else {
+				woocommerce_template_single_add_to_cart();
+			}
 		}
 
 		woocommerce_product_loop_end();
@@ -58,7 +63,6 @@ if ( woocommerce_product_loop() ) {
 
 do_action( 'woocommerce_after_main_content' );
 
-w
 do_action( 'woocommerce_sidebar' );
 
 get_footer( 'shop' );
