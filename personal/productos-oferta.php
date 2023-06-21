@@ -58,15 +58,7 @@ function mostrar_productos_aleatorios($atts) {
       text-decoration: line-through;
   }
 
-  .agregar-carrito {
-      display: inline-block;
-      padding: 5px 10px;
-      background-color: #f0f0f0;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-  }
-
+  .agregar-carrito,
   .agregar-deseados {
       display: inline-block;
       padding: 5px 10px;
@@ -74,16 +66,19 @@ function mostrar_productos_aleatorios($atts) {
       border: none;
       cursor: pointer;
       text-decoration: none;
+      margin-top: 10px;
   }
   </style>
 
-  <script>
+<script>
   jQuery(document).ready(function($) {
       $('.agregar-carrito').on('click', function(e) {
           e.preventDefault();
           var productID = $(this).data('product-id');
           var quantity = $(this).data('quantity');
           var addToCartUrl = '<?php echo esc_js( wc_get_cart_url() ); ?>?add-to-cart=' + productID + '&quantity=' + quantity;
+          var $button = $(this); // Referencia al botón de "Agregar al carrito"
+
           $.ajax({
               type: 'POST',
               url: addToCartUrl,
@@ -92,6 +87,17 @@ function mostrar_productos_aleatorios($atts) {
               },
               success: function(response) {
                   // Aquí puedes mostrar un mensaje de éxito o actualizar el contenido del carrito
+
+                  // Crear un mensaje de éxito
+                  var successMessage = $('<span class="mensaje-exito">Producto agregado al carrito</span>');
+
+                  // Insertar el mensaje debajo del botón
+                  $button.after(successMessage);
+
+                  // Eliminar el mensaje después de unos segundos
+                  setTimeout(function() {
+                      successMessage.remove();
+                  }, 3000);
               },
               error: function(jqXHR, textStatus, errorThrown) {
                   // Aquí puedes mostrar un mensaje de error o realizar acciones adicionales
@@ -99,7 +105,8 @@ function mostrar_productos_aleatorios($atts) {
           });
       });
   });
-  </script>
+</script>
+
 
   <?php
   if ($products->have_posts()) {
@@ -127,8 +134,12 @@ function mostrar_productos_aleatorios($atts) {
                           <?php echo $product->get_regular_price(); ?>
                       </span>
                   <?php endif; ?>
-                  <a href="#" class="agregar-carrito" data-product-id="<?php echo $product->get_id(); ?>" data-quantity="1">Agregar al carrito</a>
-                  <span class="agregar-deseados">Agregar a la lista de deseos</span>
+                  <div>
+                    <a href="#" class="agregar-carrito" data-product-id="<?php echo $product->get_id(); ?>" data-quantity="1">Agregar al carrito</a>
+                  </div>
+                  <div>
+                    <span class="agregar-deseados">Agregar a la lista de deseos</span>
+                  </div>
               </div>
           </div>
           <?php
@@ -144,3 +155,18 @@ function mostrar_productos_aleatorios($atts) {
   return ob_get_clean();
 }
 add_shortcode('productos_aleatorios', 'mostrar_productos_aleatorios');
+
+// Función para procesar la acción de agregar al carrito mediante AJAX
+add_action('wp_ajax_agregar_al_carrito', 'agregar_al_carrito_ajax');
+add_action('wp_ajax_nopriv_agregar_al_carrito', 'agregar_al_carrito_ajax');
+
+function agregar_al_carrito_ajax() {
+  $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+  $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;
+
+  if ($product_id > 0) {
+    WC()->cart->add_to_cart($product_id, $quantity);
+  }
+
+  die();
+}
