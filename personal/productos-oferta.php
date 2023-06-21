@@ -1,6 +1,6 @@
 <?php
 
-function mostrar_productos_aleatorios($atts) {
+function mostrar_productos_oferta($atts) {
   $atts = shortcode_atts(array(
       'cantidad' => '5'
   ), $atts);
@@ -154,7 +154,7 @@ function mostrar_productos_aleatorios($atts) {
 
   return ob_get_clean();
 }
-add_shortcode('productos_aleatorios', 'mostrar_productos_aleatorios');
+add_shortcode('productos_oferta', 'mostrar_productos_oferta');
 
 // Función para procesar la acción de agregar al carrito mediante AJAX
 add_action('wp_ajax_agregar_al_carrito', 'agregar_al_carrito_ajax');
