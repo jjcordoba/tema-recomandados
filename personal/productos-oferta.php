@@ -1,6 +1,6 @@
 <?php
 
-function mostrar_productos_aleatorios($atts) {
+function mostrar_productos_oferta($atts) {
   $atts = shortcode_atts(array(
       'cantidad' => '5'
   ), $atts);
@@ -70,43 +70,17 @@ function mostrar_productos_aleatorios($atts) {
   }
   </style>
 
-<script>
+  <script>
   jQuery(document).ready(function($) {
-      $('.agregar-carrito').on('click', function(e) {
+      $('.agregar-deseados').on('click', function(e) {
           e.preventDefault();
-          var productID = $(this).data('product-id');
-          var quantity = $(this).data('quantity');
-          var addToCartUrl = '<?php echo esc_js( wc_get_cart_url() ); ?>?add-to-cart=' + productID + '&quantity=' + quantity;
-          var $button = $(this); // Referencia al botón de "Agregar al carrito"
+          var productID = $(this).closest('.producto').find('.agregar-carrito').data('product-id');
+          var addToWishlistUrl = '<?php echo esc_js(wc_get_account_endpoint_url('wishlist')); ?>?add_to_wishlist=' + productID;
 
-          $.ajax({
-              type: 'POST',
-              url: addToCartUrl,
-              beforeSend: function() {
-                  // Aquí puedes mostrar un spinner o un mensaje de carga
-              },
-              success: function(response) {
-                  // Aquí puedes mostrar un mensaje de éxito o actualizar el contenido del carrito
-
-                  // Crear un mensaje de éxito
-                  var successMessage = $('<span class="mensaje-exito">Producto agregado al carrito</span>');
-
-                  // Insertar el mensaje debajo del botón
-                  $button.after(successMessage);
-
-                  // Eliminar el mensaje después de unos segundos
-                  setTimeout(function() {
-                      successMessage.remove();
-                  }, 3000);
-              },
-              error: function(jqXHR, textStatus, errorThrown) {
-                  // Aquí puedes mostrar un mensaje de error o realizar acciones adicionales
-              }
-          });
+          window.location.href = addToWishlistUrl;
       });
   });
-</script>
-
+  </script>
 
   <?php
   if ($products->have_posts()) {
@@ -138,7 +112,7 @@ function mostrar_productos_aleatorios($atts) {
                     <a href="#" class="agregar-carrito" data-product-id="<?php echo $product->get_id(); ?>" data-quantity="1">Agregar al carrito</a>
                   </div>
                   <div>
-                    <span class="agregar-deseados">Agregar a la lista de deseos</span>
+                    <a href="<?php echo esc_url(wc_get_account_endpoint_url('wishlist')); ?>" class="agregar-deseados">Agregar a la lista de deseos</a>
                   </div>
               </div>
           </div>
@@ -154,7 +128,7 @@ function mostrar_productos_aleatorios($atts) {
 
   return ob_get_clean();
 }
-add_shortcode('productos_aleatorios', 'mostrar_productos_aleatorios');
+add_shortcode('productos_oferta', 'mostrar_productos_oferta');
 
 // Función para procesar la acción de agregar al carrito mediante AJAX
 add_action('wp_ajax_agregar_al_carrito', 'agregar_al_carrito_ajax');
