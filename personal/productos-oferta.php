@@ -58,11 +58,18 @@ function mostrar_productos_oferta($atts) {
       text-decoration: line-through;
   }
 
-  .agregar-carrito,
+  .agregar-carrito{
+    display: inline-block;
+      padding: 5px 10px;
+      background-color: #f0f0f0;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 10px;
+  }
   .agregar-deseados {
       display: inline-block;
       padding: 5px 10px;
-      background-color: #f0f0f0;
       border: none;
       cursor: pointer;
       text-decoration: none;
@@ -108,7 +115,7 @@ function mostrar_productos_oferta($atts) {
       $('.agregar-deseados').on('click', function(e) {
           e.preventDefault();
           var productID = $(this).data('product-id');
-          var addToWishlistUrl = '<?php echo esc_js( wc_get_cart_url() ); ?>?add_to_wishlist=' + productID;
+          var addToWishlistUrl = '<?php echo esc_js( home_url('/')); ?>?add_to_wishlist=' + productID;
           window.location.href = addToWishlistUrl;
       });
   });
