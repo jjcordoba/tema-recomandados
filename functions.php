@@ -7,6 +7,7 @@ require_once 'personal/departamentos.php';
 require_once 'personal/slider-categorias.php';
 require_once 'personal/mostrarvariaciones.php';
 require_once 'personal/botones.php';
+require_once 'personal/productos-oferta.php';
 
 
 add_action('wp_head', 'dcms_show_template_file_name');
