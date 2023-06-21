@@ -1,6 +1,6 @@
 <?php
 
-function mostrar_productos_oferta($atts) {
+function mostrar_productos_aleatorios($atts) {
   $atts = shortcode_atts(array(
       'cantidad' => '5'
   ), $atts);
@@ -75,9 +75,15 @@ function mostrar_productos_oferta($atts) {
       $('.agregar-deseados').on('click', function(e) {
           e.preventDefault();
           var productID = $(this).closest('.producto').find('.agregar-carrito').data('product-id');
-          var addToWishlistUrl = '<?php echo esc_js(wc_get_account_endpoint_url('wishlist')); ?>?add_to_wishlist=' + productID;
+          var addToWishlistUrl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>?action=add_to_wishlist&product_id=' + productID;
 
-          window.location.href = addToWishlistUrl;
+          $.ajax({
+              url: addToWishlistUrl,
+              method: 'GET',
+              success: function(response) {
+                  window.location.href = response.wishlist_url;
+              }
+          });
       });
   });
   </script>
@@ -112,7 +118,7 @@ function mostrar_productos_oferta($atts) {
                     <a href="#" class="agregar-carrito" data-product-id="<?php echo $product->get_id(); ?>" data-quantity="1">Agregar al carrito</a>
                   </div>
                   <div>
-                    <a href="<?php echo esc_url(wc_get_account_endpoint_url('wishlist')); ?>" class="agregar-deseados">Agregar a la lista de deseos</a>
+                    <a href="#" class="agregar-deseados">Agregar a la lista de deseos</a>
                   </div>
               </div>
           </div>
@@ -128,19 +134,20 @@ function mostrar_productos_oferta($atts) {
 
   return ob_get_clean();
 }
-add_shortcode('productos_oferta', 'mostrar_productos_oferta');
+add_shortcode('productos_aleatorios', 'mostrar_productos_aleatorios');
 
-// Función para procesar la acción de agregar al carrito mediante AJAX
-add_action('wp_ajax_agregar_al_carrito', 'agregar_al_carrito_ajax');
-add_action('wp_ajax_nopriv_agregar_al_carrito', 'agregar_al_carrito_ajax');
+// Función para procesar la acción de agregar a la lista de deseos mediante AJAX
+add_action('wp_ajax_add_to_wishlist', 'agregar_a_lista_deseos_ajax');
+add_action('wp_ajax_nopriv_add_to_wishlist', 'agregar_a_lista_deseos_ajax');
 
-function agregar_al_carrito_ajax() {
-  $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
-  $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;
+function agregar_a_lista_deseos_ajax() {
+  $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
 
   if ($product_id > 0) {
-    WC()->cart->add_to_cart($product_id, $quantity);
+    $wishlist_url = woocommerce_add_to_wishlist($product_id);
+    wp_send_json_success(array('wishlist_url' => $wishlist_url));
+  } else {
+    wp_send_json_error();
   }
-
   die();
 }
