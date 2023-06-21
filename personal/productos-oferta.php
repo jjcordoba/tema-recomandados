@@ -58,7 +58,15 @@ function mostrar_productos_oferta($atts) {
       text-decoration: line-through;
   }
 
-  .agregar-carrito,
+  .agregar-carrito {
+      display: inline-block;
+      padding: 5px 10px;
+      background-color: #f0f0f0;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+  }
+
   .agregar-deseados {
       display: inline-block;
       padding: 5px 10px;
@@ -66,7 +74,6 @@ function mostrar_productos_oferta($atts) {
       border: none;
       cursor: pointer;
       text-decoration: none;
-      margin-top: 10px;
   }
   </style>
 
@@ -74,14 +81,30 @@ function mostrar_productos_oferta($atts) {
   jQuery(document).ready(function($) {
       $('.agregar-deseados').on('click', function(e) {
           e.preventDefault();
-          var productID = $(this).closest('.producto').find('.agregar-carrito').data('product-id');
-          var addToWishlistUrl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>?action=add_to_wishlist&product_id=' + productID;
+          var productID = $(this).data('product-id');
+          var quantity = $(this).data('quantity');
+          var addToCartUrl = '<?php echo esc_js( wc_get_cart_url() ); ?>?add-to-cart=' + productID + '&quantity=' + quantity;
+          var $button = $(this); // Referencia al botón de "Agregar al carrito"
 
           $.ajax({
               url: addToWishlistUrl,
               method: 'GET',
               success: function(response) {
-                  window.location.href = response.wishlist_url;
+                  // Aquí puedes mostrar un mensaje de éxito o actualizar el contenido del carrito
+
+                  // Crear un mensaje de éxito
+                  var successMessage = $('<span class="mensaje-exito">Producto agregado al carrito</span>');
+
+                  // Insertar el mensaje debajo del botón
+                  $button.after(successMessage);
+
+                  // Eliminar el mensaje después de unos segundos
+                  setTimeout(function() {
+                      successMessage.remove();
+                  }, 3000);
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                  // Aquí puedes mostrar un mensaje de error o realizar acciones adicionales
               }
           });
       });
@@ -118,7 +141,7 @@ function mostrar_productos_oferta($atts) {
                     <a href="#" class="agregar-carrito" data-product-id="<?php echo $product->get_id(); ?>" data-quantity="1">Agregar al carrito</a>
                   </div>
                   <div>
-                    <a href="#" class="agregar-deseados">Agregar a la lista de deseos</a>
+                    <span class="agregar-deseados">Agregar a la lista de deseos</span>
                   </div>
               </div>
           </div>
@@ -136,18 +159,17 @@ function mostrar_productos_oferta($atts) {
 }
 add_shortcode('productos_oferta', 'mostrar_productos_oferta');
 
-// Función para procesar la acción de agregar a la lista de deseos mediante AJAX
-add_action('wp_ajax_add_to_wishlist', 'agregar_a_lista_deseos_ajax');
-add_action('wp_ajax_nopriv_add_to_wishlist', 'agregar_a_lista_deseos_ajax');
+// Función para procesar la acción de agregar al carrito mediante AJAX
+add_action('wp_ajax_agregar_al_carrito', 'agregar_al_carrito_ajax');
+add_action('wp_ajax_nopriv_agregar_al_carrito', 'agregar_al_carrito_ajax');
 
-function agregar_a_lista_deseos_ajax() {
-  $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
+function agregar_al_carrito_ajax() {
+  $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+  $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;
 
   if ($product_id > 0) {
-    $wishlist_url = woocommerce_add_to_wishlist($product_id);
-    wp_send_json_success(array('wishlist_url' => $wishlist_url));
-  } else {
-    wp_send_json_error();
+    WC()->cart->add_to_cart($product_id, $quantity);
   }
+
   die();
 }
