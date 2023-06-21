@@ -1,6 +1,6 @@
 <?php
 
-function mostrar_productos_oferta($atts) {
+function mostrar_productos_aleatorios($atts) {
   $atts = shortcode_atts(array(
       'cantidad' => '5'
   ), $atts);
@@ -77,26 +77,12 @@ function mostrar_productos_oferta($atts) {
   }
   </style>
 
-  <script>
+<script>
   jQuery(document).ready(function($) {
-      $('.agregar-deseados').on('click', function(e) {
+      $('.agregar-carrito').on('click', function(e) {
           e.preventDefault();
-          var productID = $(this).data('product-id');
-          var quantity = $(this).data('quantity');
-          var addToCartUrl = '<?php echo esc_js( wc_get_cart_url() ); ?>?add-to-cart=' + productID + '&quantity=' + quantity;
-          var $button = $(this); // Referencia al botón de "Agregar al carrito"
-
-          $.ajax({
-              url: addToWishlistUrl,
-              method: 'GET',
-              success: function(response) {
-                  // Aquí puedes mostrar un mensaje de éxito o actualizar el contenido del carrito
-
-                  // Crear un mensaje de éxito
-                  var successMessage = $('<span class="mensaje-exito">Producto agregado al carrito</span>');
-
-                  // Insertar el mensaje debajo del botón
-                  $button.after(successMessage);
+          var productID = $(this).closest('.producto').find('.agregar-carrito').data('product-id');
+          var addToWishlistUrl = '<?php echo esc_js(wc_get_account_endpoint_url('wishlist')); ?>?add_to_wishlist=' + productID;
 
                   // Eliminar el mensaje después de unos segundos
                   setTimeout(function() {
@@ -109,7 +95,8 @@ function mostrar_productos_oferta($atts) {
           });
       });
   });
-  </script>
+</script>
+
 
   <?php
   if ($products->have_posts()) {
@@ -157,7 +144,7 @@ function mostrar_productos_oferta($atts) {
 
   return ob_get_clean();
 }
-add_shortcode('productos_oferta', 'mostrar_productos_oferta');
+add_shortcode('productos_aleatorios', 'mostrar_productos_aleatorios');
 
 // Función para procesar la acción de agregar al carrito mediante AJAX
 add_action('wp_ajax_agregar_al_carrito', 'agregar_al_carrito_ajax');
