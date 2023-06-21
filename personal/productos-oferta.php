@@ -58,15 +58,7 @@ function mostrar_productos_aleatorios($atts) {
       text-decoration: line-through;
   }
 
-  .agregar-carrito {
-      display: inline-block;
-      padding: 5px 10px;
-      background-color: #f0f0f0;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-  }
-
+  .agregar-carrito,
   .agregar-deseados {
       display: inline-block;
       padding: 5px 10px;
@@ -74,6 +66,7 @@ function mostrar_productos_aleatorios($atts) {
       border: none;
       cursor: pointer;
       text-decoration: none;
+      margin-top: 10px;
   }
   </style>
 
@@ -81,8 +74,25 @@ function mostrar_productos_aleatorios($atts) {
   jQuery(document).ready(function($) {
       $('.agregar-carrito').on('click', function(e) {
           e.preventDefault();
-          var productID = $(this).closest('.producto').find('.agregar-carrito').data('product-id');
-          var addToWishlistUrl = '<?php echo esc_js(wc_get_account_endpoint_url('wishlist')); ?>?add_to_wishlist=' + productID;
+          var productID = $(this).data('product-id');
+          var quantity = $(this).data('quantity');
+          var addToCartUrl = '<?php echo esc_js( wc_get_cart_url() ); ?>?add-to-cart=' + productID + '&quantity=' + quantity;
+          var $button = $(this); // Referencia al botón de "Agregar al carrito"
+
+          $.ajax({
+              type: 'POST',
+              url: addToCartUrl,
+              beforeSend: function() {
+                  // Aquí puedes mostrar un spinner o un mensaje de carga
+              },
+              success: function(response) {
+                  // Aquí puedes mostrar un mensaje de éxito o actualizar el contenido del carrito
+
+                  // Crear un mensaje de éxito
+                  var successMessage = $('<span class="mensaje-exito">Producto agregado al carrito</span>');
+
+                  // Insertar el mensaje debajo del botón
+                  $button.after(successMessage);
 
                   // Eliminar el mensaje después de unos segundos
                   setTimeout(function() {
