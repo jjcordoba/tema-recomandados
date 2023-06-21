@@ -104,6 +104,13 @@ function mostrar_productos_oferta($atts) {
               }
           });
       });
+
+      $('.agregar-deseados').on('click', function(e) {
+          e.preventDefault();
+          var productID = $(this).data('product-id');
+          var addToWishlistUrl = '<?php echo esc_js( wc_get_cart_url() ); ?>?add_to_wishlist=' + productID;
+          window.location.href = addToWishlistUrl;
+      });
   });
 </script>
 
@@ -138,7 +145,11 @@ function mostrar_productos_oferta($atts) {
                     <a href="#" class="agregar-carrito" data-product-id="<?php echo $product->get_id(); ?>" data-quantity="1">Agregar al carrito</a>
                   </div>
                   <div>
-                    <span class="agregar-deseados">Agregar a la lista de deseos</span>
+                  <?php
+                  $wishlist_url = get_permalink(get_option('yith_wcwl_wishlist_page_id'));
+                  $wishlist_url = add_query_arg('add_to_wishlist', $product->get_id(), $wishlist_url);
+                  ?>
+                  <a href="<?php echo esc_url($wishlist_url); ?>" class="agregar-deseados" data-product-id="<?php echo $product->get_id(); ?>">Agregar a la lista de deseos</a>
                   </div>
               </div>
           </div>
