@@ -188,5 +188,5 @@ function agregar_al_carrito_ajax()
     wp_die();
 }
   
-add_shortcode('todos_productos', 'mostrar_productos_al_azar');
+add_shortcode('productos_oferta', 'mostrar_productos_al_azar');
 add_action('wp_head', 'mostrar_productos_al_azar_css');
