@@ -54,8 +54,8 @@ function todos_los_productos_css()
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         .product img {
-            width: 100%;
-            height: auto;
+          width: 213px;
+          height: auto;
             display: block;
             margin-bottom: 10px;
             float: left;

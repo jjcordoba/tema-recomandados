@@ -44,7 +44,7 @@ function mostrar_productos_al_azar_css()
         .producto {
             display: flex;
             align-items: center;
-            width: 23%;
+            width: 117px;
             margin-bottom: 20px;
             background-color: #fff;
             border: 1px solid #ddd;
