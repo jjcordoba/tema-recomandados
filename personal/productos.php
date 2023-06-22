@@ -45,7 +45,7 @@ function todos_los_productos_css()
       
 
         .product {
-            width: 23%;
+            width: 23%!important;
             margin-bottom: 20px;
             background-color: #fff;
             border: 1px solid #ddd;
